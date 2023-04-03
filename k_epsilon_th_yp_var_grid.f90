@@ -590,9 +590,9 @@ subroutine  output_fields_thermal(ny,T,Th2,lambda,dlambdadT,d2lambdadT2,Kt,eps,n
     call d2deta2(ny,Th2,d2Th2deta2,deta)
     d2Th2dy2 = d2Th2deta2*detady**2.d0 + dTh2deta*d2etady2
 
-    q_lam = - ( lambda / Pr ) * dTdy
-    q_R = - ( nut / sigmaT ) * dTdy
-    q_new = - ( dlambdadT / Pr ) * dTh2dy
+    q_lam = ( lambda / Pr ) * dTdy
+    q_R = ( nut / sigmaT ) * dTdy
+    q_new = ( dlambdadT / Pr ) * dTh2dy
 
     P_Th2 = ( nut / sigmaT ) * dTdy**2.d0
     eps_Th2(2:ny-1) = ( eps(2:ny-1) / Kt(2:ny-1) ) * ( lambda(2:ny-1) / Pr ) * Th2(2:ny-1)

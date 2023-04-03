@@ -1,13 +1,13 @@
 .false.     ! flag
-3200        ! ny
-6000     ! niter
-400         ! Re_tau
+800        ! ny
+600000     ! niter
+100         ! Re_tau
 0.05        ! dy_min
 1.d0        ! Pr
 0.d-2        ! Bp
 0.d0        !Cp
-3d-1        ! alphaU 
+7d-1        ! alphaU 
 3d-1	    ! alphaKt 
 3d-1        ! alphaeps
-3d-1        ! alphaT 
+7d-1        ! alphaT 
 3d-1	    ! alphaTh2
