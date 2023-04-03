@@ -100,7 +100,7 @@ Program main_K_epsilon
         eps(1) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(1)))+4.d0*dsqrt(dabs(Kt(2)))-dsqrt(dabs(Kt(3))))/(2.d0*deta) )*detady(1) )**2.d0
         call T_coefficients(aT_w,aT_e,sT,nut(1),dnutdy(1),lambda(1),dlambdadT(1),d2lambdadT2(1),dTh2dy(1),d2Th2dy2(1),dTdy(1), &
             Pr,sigmaT,deta,d2etady2(1),detady(1))
-        T(1) = sT + aT_e*T(2) + aT_w*( T(2) + 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
+        T(1) = sT + aT_e*T(2) + aT_w*( T(2) - 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
         Th2(1) = 0.d0
 
         do j =2,ny-1
@@ -124,7 +124,7 @@ Program main_K_epsilon
         )*detady(ny) )**2.d0
         call T_coefficients(aT_w,aT_e,sT,nut(ny),dnutdy(ny),lambda(ny),dlambdadT(ny),d2lambdadT2(ny),dTh2dy(ny),d2Th2dy2(ny), & 
         dTdy(ny), Pr,sigmaT,deta,d2etady2(ny),detady(ny))
-        T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) - 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
+        T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) + 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
         Th2(ny) = 0.d0
 
         call residuals(ny,U,U0,resU)
