@@ -4,7 +4,8 @@
 400         ! Re_tau
 0.05        ! dy_min
 1.d0        ! Pr
-1.d-2        ! Bp
+0.d-2        ! Bp
+0.d0        !Cp
 3d-1        ! alphaU 
 3d-1	    ! alphaKt 
 3d-1        ! alphaeps
