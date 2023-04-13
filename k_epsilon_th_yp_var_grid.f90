@@ -21,7 +21,7 @@ Program main_K_epsilon
     real*8 Re_tau,Pr,Bp,Cp,dy_min,sigmak,sigmae,Cmu,Ce1,Ce2,f1,alphaU,alphaKt,alphaeps
     real*8 resU,resK,resE,resT,resTh2,deta,aU_w,aU_e,sU,aK_w,aK_e,sK,aE_w,aE_e,sE, conv_fac
     real*8 aT_e,aT_w,sT,aTh2_e,aTh2_w,sTh2
-    real*8 sigmaT,sigmaTh2,alphaT,alphaTh2
+    real*8 sigmaT,sigmaTh2,alphaT,alphaTh2,U_max
     CHARACTER(len=80)::fname_ke
     CHARACTER(len=80)::fname_th
     CHARACTER(len=80)::fname_res
@@ -95,12 +95,15 @@ Program main_K_epsilon
         call d2deta2(ny,Th2,d2Th2deta2,deta)
         d2Th2dy2 = d2Th2deta2*detady**2.d0 + dTh2deta*d2etady2
 
+        U_max = maxval(U, dim=1, mask=(U>0))
+
         U(1) = 0.d0
         Kt(1) = 0.d0
         eps(1) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(1)))+4.d0*dsqrt(dabs(Kt(2)))-dsqrt(dabs(Kt(3))))/(2.d0*deta) )*detady(1) )**2.d0
         call T_coefficients(aT_w,aT_e,sT,nut(1),dnutdy(1),lambda(1),dlambdadT(1),d2lambdadT2(1),dTh2dy(1),d2Th2dy2(1),dTdy(1), &
             Pr,sigmaT,deta,d2etady2(1),detady(1))
         T(1) = sT + aT_e*T(2) + aT_w*( T(2) - 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
+        !!!T(1) = Pr * Re_tau ! U_max
         Th2(1) = 0.d0
 
         do j =2,ny-1
@@ -125,6 +128,7 @@ Program main_K_epsilon
         call T_coefficients(aT_w,aT_e,sT,nut(ny),dnutdy(ny),lambda(ny),dlambdadT(ny),d2lambdadT2(ny),dTh2dy(ny),d2Th2dy2(ny), & 
         dTdy(ny), Pr,sigmaT,deta,d2etady2(ny),detady(ny))
         T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) + 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
+        !!!T(ny) = - T(1)
         Th2(ny) = 0.d0
 
         call residuals(ny,U,U0,resU)
@@ -258,7 +262,7 @@ subroutine initialization(flag,ny,Re_tau,Pr,Bp,Cp,dy_min,y,detady,d2etady2,U,Kt,
         !!!********************************************************
   
         do j=1,ny/2
-            T(j) = Pr*( U(j) - U(ny/2) )
+            T(j) = - Pr*( U(j) - U(ny/2) )
         enddo
 
         do j=ny/2+1,ny
@@ -482,10 +486,12 @@ subroutine  T_coefficients(aT_w,aT_e,sT,nut,dnutdy,lambda,dlambdadT,d2lambdadT2,
     A2 = ( dlambdadT * dTdy + d2lambdadT2 * dTh2dy ) / Pr + dnutdy / sigmaT
     A3 =  dlambdadT * d2Th2dy2 / Pr
 
+    !print*, ' A1 = ',A1,' A2 = ',A2,' A3 = ',A3
+
     dev = deta * ( d2etady2 / detady + A2 / A1 ) / ( 4.d0 * detady )
 
-    aT_w = ( 5.d-1 + dev )
-    aT_e = ( 5.d-1 - dev )
+    aT_w = ( 5.d-1 - dev )
+    aT_e = ( 5.d-1 + dev )
     sT = ( ( deta * deta ) / ( 2.d0 * detady**2.d0 ) ) * A3 / A1
 
     end
@@ -513,8 +519,8 @@ subroutine  Th2_coefficients(aTh2_w,aTh2_e,sTh2,nut,dnutdy,lambda,dlambdadT,d2la
 
     den = ( 2.d0 * detady**2.d0 + deta * deta * ( A4 / A1 ) )
 
-    aTh2_w = ( 5.d-1  + dev ) * ( 2.d0 * detady**2.d0 ) / den
-    aTh2_e = ( 5.d-1  - dev ) * ( 2.d0 * detady**2.d0 ) / den
+    aTh2_w = ( 5.d-1  - dev ) * ( 2.d0 * detady**2.d0 ) / den
+    aTh2_e = ( 5.d-1  + dev ) * ( 2.d0 * detady**2.d0 ) / den
     sTh2 = deta * deta * ( A3 / A1 ) / den
 
     end
