@@ -2,12 +2,12 @@
 800        ! ny
 2400000     ! niter
 100         ! Re_tau
-0.05        ! dy_min
+5.d-2        ! dy_min
 1.d0        ! Pr
 0.d-2        ! Bp
 0.d0        !Cp
-7d-1        ! alphaU 
-3d-1	    ! alphaKt 
-3d-1        ! alphaeps
-7d-1        ! alphaT 
-3d-1	    ! alphaTh2
+7.d-1        ! alphaU 
+3.d-1	    ! alphaKt 
+3.d-1        ! alphaeps
+1.d0        ! alphaT 
+1.d0	    ! alphaTh2

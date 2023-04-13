@@ -104,39 +104,44 @@ Program main_K_epsilon
 
         U_max = maxval(U, dim=1, mask=(U>0))
 
-        U(1) = 0.d0
-        Kt(1) = 0.d0
-        eps(1) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(1)))+4.d0*dsqrt(dabs(Kt(2)))-dsqrt(dabs(Kt(3))))/(2.d0*deta) )*detady(1) )**2.d0
-        call T_coefficients(aT_w,aT_e,sT,nut(1),dnutdy(1),lambda(1),dlambdadT(1),d2lambdadT2(1),dTh2dy(1),d2Th2dy2(1),dTdy(1), &
-            Pr,sigmaT,deta,d2etady2(1),detady(1))
-        T(1) = sT + aT_e*T(2) + aT_w*( T(2) - 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
+        !U(1) = 0.d0
+        !Kt(1) = 0.d0
+        !eps(1) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(1)))+4.d0*dsqrt(dabs(Kt(2)))-dsqrt(dabs(Kt(3))))/(2.d0*deta) )*detady(1) )**2.d0
+        !call T_coefficients(aT_w,aT_e,sT,nut(1),dnutdy(1),lambda(1),dlambdadT(1),d2lambdadT2(1),dTh2dy(1),d2Th2dy2(1),dTdy(1), &
+        !    Pr,sigmaT,deta,d2etady2(1),detady(1))
+        !T(1) = sT + aT_e*T(2) + aT_w*( T(2) - 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
         !!!T(1) = Pr * Re_tau ! U_max
-        Th2(1) = 0.d0
-
-        do j =2,ny-1
-            call u_coefficients(aU_w,aU_e,sU,nut(j),dnutdy(j),deta,Re_tau,d2etady2(j),detady(j))
-            U(j) =  sU + aU_e*U(j+1) + aU_w*U(j-1)
-            call K_coefficients(aK_w,aK_e,sK,eps(j),nut(j),dnutdy(j),dUdy(j),deta,sigmak,d2etady2(j),detady(j))
-            Kt(j) = sK + aK_e*Kt(j+1) + aK_w*Kt(j-1)
-            call E_coefficients(aE_w,aE_e,sE,eps(j),Kt(j),nut(j),dnutdy(j),dUdy(j),deta,sigmae,Ce1,f1,Ce2,f2(j),d2etady2(j), &
-            detady(j))
-            eps(j) = sE + aE_e*eps(j+1) + aE_w*eps(j-1)
-            call T_coefficients(aT_w,aT_e,sT,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTh2dy(j),d2Th2dy2(j),dTdy(j), &
-            Pr,sigmaT,deta,d2etady2(j),detady(j))
-            T(j) = sT + aT_e*T(j+1) + aT_w*T(j-1)
-            call Th2_coefficients(aTh2_w,aTh2_e,sTh2,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTdy(j),d2Tdy2(j), &
-            Pr,sigmaTh2,deta,d2etady2(j),detady(j),eps(j),Kt(j))
-            Th2(j) = sTh2 + aTh2_e*Th2(j+1) + aTh2_w*Th2(j-1)
-        enddo
-        U(ny) = 0.d0
-        Kt(ny) = 0.d0
-        eps(ny) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(ny)))+4.d0*dsqrt(dabs(Kt(ny-1)))-dsqrt(dabs(Kt(ny-1))))/(2.d0*deta) & 
-        )*detady(ny) )**2.d0
-        call T_coefficients(aT_w,aT_e,sT,nut(ny),dnutdy(ny),lambda(ny),dlambdadT(ny),d2lambdadT2(ny),dTh2dy(ny),d2Th2dy2(ny), & 
-        dTdy(ny), Pr,sigmaT,deta,d2etady2(ny),detady(ny))
-        T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) + 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
+        !Th2(1) = 0.d0
+        !do j =2,ny-1
+        !    call u_coefficients(aU_w,aU_e,sU,nut(j),dnutdy(j),deta,Re_tau,d2etady2(j),detady(j))
+        !    U(j) =  sU + aU_e*U(j+1) + aU_w*U(j-1)
+        !    call K_coefficients(aK_w,aK_e,sK,eps(j),nut(j),dnutdy(j),dUdy(j),deta,sigmak,d2etady2(j),detady(j))
+        !    Kt(j) = sK + aK_e*Kt(j+1) + aK_w*Kt(j-1)
+        !    call E_coefficients(aE_w,aE_e,sE,eps(j),Kt(j),nut(j),dnutdy(j),dUdy(j),deta,sigmae,Ce1,f1,Ce2,f2(j),d2etady2(j), &
+        !    detady(j))
+        !    eps(j) = sE + aE_e*eps(j+1) + aE_w*eps(j-1)
+        !    call T_coefficients(aT_w,aT_e,sT,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTh2dy(j),d2Th2dy2(j),dTdy(j), &
+        !    Pr,sigmaT,deta,d2etady2(j),detady(j))
+        !    T(j) = sT + aT_e*T(j+1) + aT_w*T(j-1)
+        !    call Th2_coefficients(aTh2_w,aTh2_e,sTh2,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTdy(j),d2Tdy2(j), &
+        !    Pr,sigmaTh2,deta,d2etady2(j),detady(j),eps(j),Kt(j))
+        !    Th2(j) = sTh2 + aTh2_e*Th2(j+1) + aTh2_w*Th2(j-1)
+        !enddo
+        !U(ny) = 0.d0
+        !Kt(ny) = 0.d0
+        !eps(ny) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(ny)))+4.d0*dsqrt(dabs(Kt(ny-1)))-dsqrt(dabs(Kt(ny-1))))/(2.d0*deta) & 
+        !)*detady(ny) )**2.d0
+        !call T_coefficients(aT_w,aT_e,sT,nut(ny),dnutdy(ny),lambda(ny),dlambdadT(ny),d2lambdadT2(ny),dTh2dy(ny),d2Th2dy2(ny), & 
+        !dTdy(ny), Pr,sigmaT,deta,d2etady2(ny),detady(ny))
+        !T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) + 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
         !!!T(ny) = - T(1)
-        Th2(ny) = 0.d0
+        !Th2(ny) = 0.d0
+
+        call solve_u(U,nut,dnutdy,detady,d2etady2,deta,Re_tau,ny)       
+        call solve_Kt(Kt,eps,dUdy,nut,dnutdy,detady,d2etady2,deta,sigmak,ny) 
+        call solve_eps(Kt,eps,dUdy,nut,dnutdy,detady,d2etady2,deta,sigmae,ce1,ce2,f1,f2,ny)
+        call solve_T(T,nut,dnutdy,lambda,dlambdadT,d2lambdadT2,dTh2dy,d2Th2dy2,dTdy,Pr,sigmaT,deta,d2etady2,detady,ny)
+        call solve_Th2(Th2,nut,dnutdy,lambda,dlambdadT,d2lambdadT2,dTdy,d2Tdy2,Pr,sigmaTh2,deta,d2etady2,detady,eps,Kt,ny)
 
         call residuals(ny,U,U0,resU)
         call residuals(ny,Kt,Kt0,resK)
@@ -148,7 +153,8 @@ Program main_K_epsilon
         U = dabs(alphaU*U +(1.d0-alphaU)*U0)
         Kt = dabs(alphaKt*Kt +(1.d0-alphaKt)*Kt0)
         eps = dabs(alphaeps*eps +(1.d0-alphaeps)*eps0)
-        T = dabs(alphaT*T +(1.d0-alphaT)*T0)
+        !!! T can be negative
+        T = alphaT*T +(1.d0-alphaT)*T0
         Th2 = dabs(alphaTh2*Th2 +(1.d0-alphaTh2)*Th20)
         print*, ' completed =', 100*real(iter)/real(niter), ' resU = ', resU, ' resK = ', resK, ' resE = ', resE, &
         ' resT = ', resT, ' resTh2 = ', resTh2
@@ -772,4 +778,129 @@ subroutine  correct_residuals(alpha,res,res_old)
 
     end
 
+!!!*************************************************
+!!!*						         	           *
+!!!*                 Solve U                        *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  solve_u(U,nut,dnutdy,detady,d2etady2,deta,Re_tau,ny)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(in) :: nut(1:ny),dnutdy(1:ny),detady(1:ny),d2etady2(1:ny),deta,Re_tau
+    real*8, intent(inout) :: U(1:ny)
+    real*8 aU_w,aU_e,sU
+    integer j
 
+    U(1) = 0.d0
+    do j =2,ny-1
+        call u_coefficients(aU_w,aU_e,sU,nut(j),dnutdy(j),deta,Re_tau,d2etady2(j),detady(j))
+        U(j) =  sU + aU_e*U(j+1) + aU_w*U(j-1)
+    enddo
+    U(ny) = 0.d0
+
+    end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*                 Solve Kt                        *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  solve_Kt(Kt,eps,dUdy,nut,dnutdy,detady,d2etady2,deta,sigmak,ny)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(in) :: eps(1:ny),dUdy(1:ny),nut(1:ny),dnutdy(1:ny),detady(1:ny),d2etady2(1:ny),deta,sigmak
+    real*8, intent(inout) :: Kt(1:ny)
+    real*8 aK_w,aK_e,sK
+    integer j
+
+    Kt(1) = 0.d0
+    do j =2,ny-1
+        call K_coefficients(aK_w,aK_e,sK,eps(j),nut(j),dnutdy(j),dUdy(j),deta,sigmak,d2etady2(j),detady(j))
+        Kt(j) = sK + aK_e*Kt(j+1) + aK_w*Kt(j-1)
+    enddo
+    Kt(ny) = 0.d0
+
+    end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*                 Solve Eps                        *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  solve_eps(Kt,eps,dUdy,nut,dnutdy,detady,d2etady2,deta,sigmae,ce1,ce2,f1,f2,ny)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(in) :: Kt(1:ny),dUdy(1:ny),nut(1:ny),dnutdy(1:ny),detady(1:ny),d2etady2(1:ny),deta,sigmae
+    real*8, intent(in) :: ce1,ce2,f1,f2(1:ny)
+    real*8, intent(inout) :: eps(1:ny)
+    real*8 aE_w,aE_e,sE
+    integer j
+
+    eps(1) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(1)))+4.d0*dsqrt(dabs(Kt(2)))-dsqrt(dabs(Kt(3))))/(2.d0*deta) )*detady(1) )**2.d0
+    do j =2,ny-1
+        call E_coefficients(aE_w,aE_e,sE,eps(j),Kt(j),nut(j),dnutdy(j),dUdy(j),deta,sigmae,Ce1,f1,Ce2,f2(j),d2etady2(j), &
+        detady(j))
+        eps(j) = sE + aE_e*eps(j+1) + aE_w*eps(j-1)
+    enddo
+    eps(ny) = 2.d0*( ( (-3.d0*dsqrt(dabs(Kt(ny)))+4.d0*dsqrt(dabs(Kt(ny-1)))-dsqrt(dabs(Kt(ny-1))))/(2.d0*deta) )*detady(ny) )**2.d0
+
+    end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*                 Solve T                       *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  solve_T(T,nut,dnutdy,lambda,dlambdadT,d2lambdadT2,dTh2dy,d2Th2dy2,dTdy,Pr,sigmaT,deta,d2etady2,detady,ny)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(in) :: dTdy(1:ny),nut(1:ny),dnutdy(1:ny),detady(1:ny),d2etady2(1:ny),deta,sigmaT
+    real*8, intent(in) :: Pr,lambda(1:ny),dlambdadT(1:ny),d2lambdadT2(1:ny),dTh2dy(1:ny),d2Th2dy2(1:ny)
+    real*8, intent(inout) :: T(1:ny)
+    real*8 aT_w,aT_e,sT
+    integer j
+
+    call T_coefficients(aT_w,aT_e,sT,nut(1),dnutdy(1),lambda(1),dlambdadT(1),d2lambdadT2(1),dTh2dy(1),d2Th2dy2(1),dTdy(1), &
+        Pr,sigmaT,deta,d2etady2(1),detady(1))
+    T(1) = sT + aT_e*T(2) + aT_w*( T(2) - 2.d0 * deta * Pr / ( lambda(1) * detady(1) ) )
+    !!!T(1) = Pr * Re_tau ! U_max
+    do j =2,ny-1
+        call T_coefficients(aT_w,aT_e,sT,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTh2dy(j),d2Th2dy2(j),dTdy(j), &
+        Pr,sigmaT,deta,d2etady2(j),detady(j))
+        T(j) = sT + aT_e*T(j+1) + aT_w*T(j-1)
+    enddo
+    call T_coefficients(aT_w,aT_e,sT,nut(ny),dnutdy(ny),lambda(ny),dlambdadT(ny),d2lambdadT2(ny),dTh2dy(ny),d2Th2dy2(ny), & 
+    dTdy(ny), Pr,sigmaT,deta,d2etady2(ny),detady(ny))
+    T(ny) = sT + aT_w*T(ny-1) + aT_e*( T(ny-1) + 2.d0 * deta * Pr / ( lambda(ny) * detady(ny) ) ) 
+    !!!T(ny) = - T(1)
+
+    end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*                 Solve Th2                       *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  solve_Th2(Th2,nut,dnutdy,lambda,dlambdadT,d2lambdadT2,dTdy,d2Tdy2,Pr,sigmaTh2,deta,d2etady2,detady,eps,Kt,ny)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(in) :: dTdy(1:ny),nut(1:ny),dnutdy(1:ny),detady(1:ny),d2etady2(1:ny),deta,sigmaTh2
+    real*8, intent(in) :: Pr,lambda(1:ny),dlambdadT(1:ny),d2lambdadT2(1:ny),d2Tdy2(1:ny),Kt(1:ny),eps(1:ny)
+    real*8, intent(inout) :: Th2(1:ny)
+    real*8 aTh2_w,aTh2_e,sTh2
+    integer j
+
+    Th2(1) = 0.d0
+    do j =2,ny-1
+        call Th2_coefficients(aTh2_w,aTh2_e,sTh2,nut(j),dnutdy(j),lambda(j),dlambdadT(j),d2lambdadT2(j),dTdy(j),d2Tdy2(j), &
+        Pr,sigmaTh2,deta,d2etady2(j),detady(j),eps(j),Kt(j))
+        Th2(j) = sTh2 + aTh2_e*Th2(j+1) + aTh2_w*Th2(j-1)
+    enddo
+    Th2(ny) = 0.d0
+
+    end
