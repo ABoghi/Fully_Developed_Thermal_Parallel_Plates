@@ -20,6 +20,7 @@ Program main_K_epsilon
     integer j,ny,nhy,iter,niter
     real*8 Re_tau,Pr,Bp,Cp,dy_min,sigmak,sigmae,Cmu,Ce1,Ce2,f1,alphaU,alphaKt,alphaeps
     real*8 resU,resK,resE,resT,resTh2,deta,aU_w,aU_e,sU,aK_w,aK_e,sK,aE_w,aE_e,sE, conv_fac
+    real*8 resU_old,resK_old,resE_old,resT_old,resTh2_old
     real*8 aT_e,aT_w,sT,aTh2_e,aTh2_w,sTh2
     real*8 sigmaT,sigmaTh2,alphaT,alphaTh2,U_max
     CHARACTER(len=80)::fname_ke
@@ -70,6 +71,12 @@ Program main_K_epsilon
     write(11,*) '"iter","resU","resK","resE","resT","resTh2"'
 
     do iter=1,niter
+
+        resU_old = resU
+        resK_old = resK
+        resE_old = resE
+        resT_old = resT
+        resTh2_old = resTh2
 
         U0 = U
         Kt0 = kt
@@ -141,8 +148,18 @@ Program main_K_epsilon
         U = dabs(alphaU*U +(1.d0-alphaU)*U0)
         Kt = dabs(alphaKt*Kt +(1.d0-alphaKt)*Kt0)
         eps = dabs(alphaeps*eps +(1.d0-alphaeps)*eps0)
+        T = dabs(alphaT*T +(1.d0-alphaT)*T0)
+        Th2 = dabs(alphaTh2*Th2 +(1.d0-alphaTh2)*Th20)
         print*, ' completed =', 100*real(iter)/real(niter), ' resU = ', resU, ' resK = ', resK, ' resE = ', resE, &
         ' resT = ', resT, ' resTh2 = ', resTh2
+
+        !if(iter > 1) then
+        !    call correct_residuals(alphaU,resU,resU_old)
+        !    call correct_residuals(alphaKt,resK,resK_old)
+        !    call correct_residuals(alphaeps,resE,resE_old)
+        !    call correct_residuals(alphaT,resT,resT_old)
+        !    call correct_residuals(alphaTh2,resTh2,resTh2_old)
+        !endif
         
     enddo
     close(11)
@@ -702,3 +719,57 @@ subroutine  thernal_diffusivity(lambda,dlambdadT,d2lambdadT2,T,Bp,Cp)
     d2lambdadT2 = 2.d0*Cp
 
     end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*            Thomas Algorithm                *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  thomas_algorithm(var,ny,a_e,a_w,a_p,S)
+    implicit none
+    integer, intent(in) :: ny
+    real*8, intent(inout) :: var(1:ny),a_e,a_w,a_p,S
+    real*8 A(1:ny),C_apex(1:ny)
+    integer j
+
+    A(1) = 0.d0
+    A(ny) = 0.d0
+    C_apex(1) = var(1)
+    C_apex(ny) = var(ny)
+
+    do j=2,ny-1
+        A(j) = a_e / ( a_p - a_w * A(j-1) )
+        C_apex(j) = ( a_w * C_apex(j-1) + S ) / ( a_p - a_w * A(j-1) )
+        var(j) = A(j) * var(j+1) + C_apex(j)
+    enddo
+
+    end
+
+!!!*************************************************
+!!!*						         	           *
+!!!*            Correct Residuals               *
+!!!*								               *
+!!!*************************************************
+    
+subroutine  correct_residuals(alpha,res,res_old)
+    implicit none
+    real*8, intent(in) :: res,res_old
+    real*8, intent(inout) :: alpha
+    real*8 increment
+
+    increment = 1.d-06
+
+    if(res < res_old) then
+        alpha = alpha * ( 1.d0 + increment )
+    elseif(res > res_old) then
+        alpha = alpha * ( 1.d0 + increment )
+    else
+        alpha = alpha
+    endif
+
+    alpha = min(1.d0,max(alpha,increment))
+
+    end
+
+
